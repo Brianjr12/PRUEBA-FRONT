@@ -98,7 +98,7 @@ Para desplegar la app se utilizo github pages.
 "homepage": "https://Brianjr12.github.io/PRUEBA-FRONT"
 
 3. Se creo el script para desplegar
-"deploy":"gh-pages -d build"
+"deploy":"gh-pages -d dist"
 
 # Referencias
 Tutorial de como realizar el modo oscuro
