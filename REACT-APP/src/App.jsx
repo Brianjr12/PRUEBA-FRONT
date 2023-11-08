@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import {useState,useEffect} from 'react'
+import Form from "./components/form/Form";
+import Cards from "./components/cards/Cards";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [users, setUsers] = useState([]);
+  // use the operating system theme  
+  const [theme, setTheme] = useState(() => {
+    if (window.matchMedia("(prefers-color-scheme:dark)").matches) return "dark";
+    return "light";
+  });
+
+  const handleTheme = () => {
+    setTheme((theme) => (theme === "light" ? "dark" : "light"));
+  };
+  useEffect(() => {
+    if (theme === "dark") {
+      document.querySelector("html").classList.add("dark");
+    }
+    if (theme === "light") {
+      document.querySelector("html").classList.remove("dark");
+    }
+  }, [theme]);
+
+  // avoid duplicate data
+  const saveUser = (user) => {
+    if (!users.some(({ fullName }) => fullName === user.fullName)) {
+      setUsers([...users, user]);
+    }
+  };
+
+  // keeps users in the storage
+  useEffect(() => {
+    const users = localStorage.getItem("users");
+    users && setUsers(JSON.parse(users));
+  }, []);
+
+  // save users in storage
+  useEffect(() => {
+    localStorage.setItem("users", JSON.stringify(users));
+  }, [users]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <main>
+      <div className="container p-10 ">
+        <button
+          className="bg-blue-400 px-2 py-1 m-4 text-white rounded-md hover:bg-blue-600"
+          onClick={handleTheme}
+        >
+          Cambiar tema
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <h1 className="text-center font-bold text-black mb-4 dark:text-white">
+          Bienvenido
+        </h1>
+        <Form saveUser={saveUser} />
+        <Cards users={users} setUsers={setUsers} />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </main>
+  );
 }
 
-export default App
+export default App;
